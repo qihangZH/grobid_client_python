@@ -3,6 +3,7 @@ from grobid_client.grobid_client import GrobidClient
 import os
 import shutil
 import typing
+import re
 import bs4
 
 
@@ -26,7 +27,7 @@ def read_tei_xml_text_list(tei_xml_path,
     Returns: a list of text
 
     """
-    with open(tei_xml_path, 'r', encoding='utf-8', errors='ignore') as tei:
+    with open(tei_xml_path, 'r', encoding='utf-8', errors='replace') as tei:
         soup = bs4.BeautifulSoup(tei, 'xml')
 
     div_elements = soup.find_all(tag)
@@ -85,6 +86,15 @@ if __name__ == '__main__':
                    DIR_RESULT_XML,
                    n=os.cpu_count(),
                    segment_sentences=True)
+
+    for n in os.listdir(DIR_RESULT_XML):
+        os.rename(
+            os.path.join(DIR_RESULT_XML, n),
+            os.path.join(DIR_RESULT_XML,
+                         re.search(r'^(.+)\.grobid\.tei\.xml$', n
+                                   ).groups()[0]+'.xml'
+                         )
+        )
 
     for f in os.listdir(DIR_RESULT_XML):
         tmpl = read_tei_xml_text_list(os.path.join(DIR_RESULT_XML, f), ['div'], ['s'])

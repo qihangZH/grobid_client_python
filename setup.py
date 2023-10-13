@@ -15,4 +15,4 @@ setup(name='grobid_client_python',
           'console_scripts': ['grobid_client=grobid_client.grobid_client:main']
       },
       license='LICENSE',
-    )
+      )

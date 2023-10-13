@@ -26,7 +26,7 @@ def read_tei_xml_text_list(tei_xml_path,
     Returns: a list of text
 
     """
-    with open(tei_xml_path, 'r') as tei:
+    with open(tei_xml_path, 'r', encoding='utf-8', errors='ignore') as tei:
         soup = bs4.BeautifulSoup(tei, 'xml')
 
     div_elements = soup.find_all(tag)
@@ -48,6 +48,25 @@ def read_tei_xml_text_list(tei_xml_path,
     return s_pairs_list
 
 
+def list_to_file(input_list, a_file, mode="w", encoding="utf-8", errors='strict'):
+    """Write a list to a file, each element in a line
+    The strings need to have no line break "\n" or they will be removed
+
+    Keyword Arguments:
+        plain_validate {bool} -- check if the number of lines in the file
+            equals the length of the list (default: {True}), Only Useful when not compress
+        mode {str} -- the argument of open()
+        compress {bool} -- whether to compress the output file as a gz file (default: {False})
+        errors {str} -- codec error types, see https://docs.python.org/3/library/codecs.html#codec-base-classes
+    """
+    open_mode = mode
+
+    with open(a_file, mode, 8192000, encoding=encoding, newline="\n", errors=errors) as f:
+        for e in input_list:
+            e = str(e).replace("\n", " ").replace("\r", " ")
+            f.write("{}\n".format(e))
+
+
 # %%
 if __name__ == '__main__':
     DIR_ROOT = os.path.abspath(os.path.dirname(__file__))
@@ -66,3 +85,7 @@ if __name__ == '__main__':
                    DIR_RESULT_XML,
                    n=os.cpu_count(),
                    segment_sentences=True)
+
+    for f in os.listdir(DIR_RESULT_XML):
+        tmpl = read_tei_xml_text_list(os.path.join(DIR_RESULT_XML, f), ['div'], ['s'])
+        print(tmpl)

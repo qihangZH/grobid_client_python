@@ -13,42 +13,6 @@ def delete_whole_dir(directory):
         shutil.rmtree(directory)
 
 
-def read_tei_xml_text_list(tei_xml_path,
-                           tag: typing.Union[list, str] = ['text'],
-                           subtags: typing.Union[list, str] = ['p']
-                           ):
-    """
-    read tei-format XML to list of text
-    Args:
-        tei_xml_path: the path of Tei-xml-path, is a format could be seen in https://tei-c.org/ for detail
-        tag: the tag which contain text you interested in, first level
-        subtags: second level tags, like p/s/head, etc
-
-    Returns: a list of text
-
-    """
-    with open(tei_xml_path, 'r', encoding='utf-8', errors='replace') as tei:
-        soup = bs4.BeautifulSoup(tei, 'xml')
-
-    div_elements = soup.find_all(tag)
-
-    # Initialize a list to store <s> pairs from all <div> elements
-    s_pairs_list = []
-
-    # Iterate through each <div> element
-    for div in div_elements:
-        # Find all <s> elements within the current <div>
-        s_elements = div.find_all(subtags)
-
-        # Extract and store <s> pairs as tuples in a list
-        sentences = [s.get_text(strip=True) for s in s_elements]
-
-        # Append the <s> pairs to the main list
-        s_pairs_list.extend(sentences)
-
-    return s_pairs_list
-
-
 def list_to_file(input_list, a_file, mode="w", encoding="utf-8", errors='strict'):
     """Write a list to a file, each element in a line
     The strings need to have no line break "\n" or they will be removed
@@ -95,7 +59,3 @@ if __name__ == '__main__':
                                    ).groups()[0]+'.xml'
                          )
         )
-
-    for f in os.listdir(DIR_RESULT_XML):
-        tmpl = read_tei_xml_text_list(os.path.join(DIR_RESULT_XML, f), ['div'], ['s'])
-        print(tmpl)

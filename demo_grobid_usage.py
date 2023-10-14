@@ -14,7 +14,7 @@ def delete_whole_dir(directory):
 
 
 def read_tei_xml_text_list(tei_xml_path,
-                           tag: typing.Union[list, str] = ['div'],
+                           tag: typing.Union[list, str] = ['text'],
                            subtags: typing.Union[list, str] = ['p']
                            ):
     """
